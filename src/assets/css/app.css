@@ -434,8 +434,9 @@ File: Main Css File
   color: #fff !important;
   margin: 0px;
   margin-left: 8px;
-  margin-top: 3px;
+  top: 5px;
   font-size: 14px;
+  position: relative;
 }
 .whats-app-header img {
   width: 28px;
@@ -3050,4 +3051,56 @@ body[data-layout-mode="dark"] .dark-mode {
 }
 .ChatItemName {
   color: var(--primary-strong-color);
+}
+.w-50 {
+  max-width:600px;
+  width:100%;
+}
+.formlabel {
+  font-weight: bold;
+}
+
+.whatsappPreview {
+  position: relative;
+  max-width: 240px;
+  margin: 0px auto;
+}
+.whatsappFront {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  width: 240px;
+  padding: 0px 21px;
+}
+.msgTxt {
+  text-align: center;
+  margin-top: 140px;
+}
+.msgTxt p {
+  font-size: 13px;
+}
+.whatsappPTxt {
+  margin-top: -11px;
+}
+.WhatBodyHgt {
+  max-height: 330px;
+  overflow-y: auto;
+}
+.bgGray {
+  background:#f5f6f6;
+}
+.drop-down-icons {
+  position:relative;
+}
+.drop-down-icons:after {
+  content: " ";
+  border: solid;
+  border-width: 0 3px 3px 0;
+  display: inline-block !important;
+  padding: 4px;
+  transform: rotate(45deg);
+  position: absolute;
+  top: 14px;
+  right: 1rem;
+  transition: all .2s ease-out;
 }
