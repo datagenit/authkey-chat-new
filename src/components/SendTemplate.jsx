@@ -222,7 +222,7 @@ const SendTemplate = (props) => {
             <div className="WhatBodyHgt">
               {headVar?.length > 0 && (
                 <div className="mb-3 px-2 py-2 bgGray">
-                  <label>Head Variable</label>
+                  <label className="formlabel">Head Variable</label>
                   <div className="input-group">
                     <span className="input-group-text" id="basic-addon1">
                       {"{{1}}"}
