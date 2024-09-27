@@ -27,6 +27,7 @@ const Input = (props) => {
   });
   const { currentUser } = useContext(AuthContext);
   const { dispatch } = useContext(ChatContext);
+  
   const {
     isViewerOpen,
     setIsViewerOpen,
@@ -63,6 +64,12 @@ const Input = (props) => {
       let url = await uploadWhatsAppMedia();
       const msg = {};
       const { data } = await sendMessage({
+        agent_id:currentUser.user_type==="admin"?"1":currentUser.user_id,
+        agent_name:currentUser.user_type==="admin"?"admin":currentUser.name,
+        manager_id:currentUser.user_type==="admin"?"1":currentUser.manager,
+        manager_name:currentUser.user_type==="admin"?"admin":currentUser.manager_name,
+        team_id:currentUser.user_type==="admin"?"1":currentUser.team,
+        team_name:currentUser.user_type==="admin"?"admin":currentUser.team_name,
         token: currentUser.parent_token,
         user_id: currentUser.parent_id,
         method: "media_reply",
@@ -72,7 +79,7 @@ const Input = (props) => {
         brand_number: currentUser.brand_number,
         mobile: props.selectedMobile,
         content: text,
-        agent_id: "1",
+      
       });
 
       if (data.success === true) {
@@ -112,8 +119,13 @@ const Input = (props) => {
     } else {
       const date = new Date();
       const msg = {
+        agent_id:currentUser.user_type==="admin"?"1":currentUser.user_id,
+        agent_name:currentUser.user_type==="admin"?"admin":currentUser.name,
+        manager_id:currentUser.user_type==="admin"?"1":currentUser.manager,
+        manager_name:currentUser.user_type==="admin"?"admin":currentUser.manager_name,
+        team_id:currentUser.user_type==="admin"?"1":currentUser.team,
+        team_name:currentUser.user_type==="admin"?"admin":currentUser.team_name,
         track_id: uid,
-        agent_id: currentUser.user_id,
         mobile: props.selectedMobile,
         brand_number: currentUser.brand_number,
         message_type: "TEXT",
@@ -138,6 +150,12 @@ const Input = (props) => {
       });
 
       let data = {
+        agent_id:currentUser.user_type==="admin"?"1":currentUser.user_id,
+        agent_name:currentUser.user_type==="admin"?"admin":currentUser.name,
+        manager_id:currentUser.user_type==="admin"?"1":currentUser.manager,
+        manager_name:currentUser.user_type==="admin"?"admin":currentUser.manager_name,
+        team_id:currentUser.user_type==="admin"?"1":currentUser.team,
+        team_name:currentUser.user_type==="admin"?"admin":currentUser.team_name,
         track_id: uid,
         token: currentUser.parent_token,
         user_id: currentUser.parent_id,
@@ -149,8 +167,6 @@ const Input = (props) => {
       setText("");
       sendMessage(data).then((res) => {
         if (res.data.success === true) {
-         
-
           const updatedChat = newdata.map((chatdata) => {
             if (chatdata.track_id === res.data.track_id) {
               return { ...chatdata, status: "Submitted" };
