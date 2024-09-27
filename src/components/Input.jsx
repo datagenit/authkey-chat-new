@@ -777,10 +777,10 @@ const Input = (props) => {
 
       {sendTemplatePopUp && (
         <div className="popup-agent">
-          <div className="assign-popup-content-agent w-75">
+          <div className="assign-popup-content-agent w-50">
             <div style={{ float: "right", cursor: "pointer" }}>
               <i
-                className="bx bx-x float-right"
+                className="bx bx-x float-right" style={{fontSize: "26px"}}
                 onClick={() => setSendTemplatePopUp(false)}
               ></i>
             </div>

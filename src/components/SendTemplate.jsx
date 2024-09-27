@@ -167,8 +167,9 @@ const SendTemplate = (props) => {
     <div className="mt-4">
       <div className="container popupheight">
         <div className="row">
-          <div className="col-md-4">
-            <label>Select template</label>
+          <div className="col-md-6">
+            <label className="formlabel mb-2">Select template</label>
+            <div className="selectBox drop-down-icons  mb-3">
             <select
               className="form-control"
               style={{ cursor: "pointer" }}
@@ -181,8 +182,11 @@ const SendTemplate = (props) => {
                 </option>
               ))}
             </select>
+          </div>
+          <div className="WhatBodyHgt">
+
             {headVar?.length > 0 && (
-              <div className="mt-3">
+              <div className="mb-3 px-2 py-2 bgGray">
                 <label>Head Variable</label>
                 <div className="input-group">
                   <span className="input-group-text" id="basic-addon1">
@@ -198,10 +202,10 @@ const SendTemplate = (props) => {
               </div>
             )}
             {bodyVar?.length > 0 && (
-              <div className="mt-3">
-                <label>Body Variable</label>
+              <div className="mb-3 px-2 py-2 bgGray">
+                <label className="formlabel mb-2">Body Variable</label>
                 {bodyVar.map((item, i) => (
-                  <div className="input-group" key={i}>
+                  <div className="input-group mb-2" key={i}>
                     <span className="input-group-text" id="basic-addon1">
                       {item}
                     </span>
@@ -215,8 +219,9 @@ const SendTemplate = (props) => {
                 ))}
               </div>
             )}
+            </div>
             {templatePreView && (
-              <div className="mt-3" style={{ float: "right" }}>
+              <div className="mt-2" style={{ float: "right" }}>
                 {loadingBtn ? (
                   <button className="btn btn-success" type="button" disabled>
                     <span
@@ -233,22 +238,27 @@ const SendTemplate = (props) => {
               </div>
             )}
           </div>
-          <div className="col-md-8">
+          <div className="col-md-6">
             {templatePreView ? (
               <TemplatePrev previewData={templatePreView} />
             ) : (
-              <div className="text-center templatePreviewimg">
-                <img
-                  className="whatsapp-bg"
-                  style={{ minWidth: "17rem" }}
-                  alt="img"
-                  src={bg_whatsapp}
+              <div className="whatsappPreview">
+
+                <div 
+                  className="whatsapp-review whatsapp-bg"
+                  style={{ backgroundImage: `url(${bg_whatsapp})` }}
                 />
-                <div className="templatePreviewtxt">
-                  <p className="text-right">
-                    Please select WhatsApp Template to preview
-                  </p>
-                </div>
+                <div className="whatsappFront">
+                  <div class="whats-app-header">
+                  <img alt="company img" src={wpProfile.image_url} />
+                    <div class="whatsappPTxt"> <p>{wpProfile.comp_name} </p> </div>
+                  </div>
+                    <div className="msgTxt">
+                      <p className="text-right">
+                        Please select WhatsApp Template to preview
+                      </p>
+                    </div>
+                  </div>
               </div>
             )}
           </div>

@@ -923,7 +923,7 @@ const AgentManagement = () => {
               <div className="assign-popup-content-agent">
                 <div style={{ float: "right", cursor: "pointer" }}>
                   <i
-                    className="bx bx-x float-right"
+                    className="bx bx-x float-right" style={{fontSize: "26px"}}
                     onClick={() => setUpdateForm(false)}
                   ></i>
                 </div>
@@ -1100,7 +1100,7 @@ const AgentManagement = () => {
               <div className="assign-popup-content-agent">
                 <div style={{ float: "right", cursor: "pointer" }}>
                   <i
-                    className="bx bx-x float-right"
+                    className="bx bx-x float-right" style={{fontSize: "26px"}}
                     onClick={() => setDeletePopup(false)}
                   ></i>
                 </div>
