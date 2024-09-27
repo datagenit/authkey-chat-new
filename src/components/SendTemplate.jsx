@@ -162,7 +162,7 @@ const SendTemplate = (props) => {
       headerText: updatedText,
     }));
   };
-
+ 
   return (
     <div className="mt-4">
       <div className="container popupheight">
