@@ -12,9 +12,14 @@ const SendTemplate = (props) => {
   const [templateData, setTemplateData] = useState();
   const [headVar, setHeadVar] = useState([]);
   const [bodyVar, setBodyVar] = useState([]);
-  const [bodyValue, setBodyValue] = useState({});
-  const [headValue, setHeadValue] = useState({});
+  const [bodyValue, setBodyValue] = useState(
+    bodyVar ? Array(bodyVar.length).fill("") : 0
+  );
+  const [headValue, setHeadValue] = useState(
+    headVar ? Array(headVar.length).fill("") : 0
+  );
   const [loadingBtn, setLoadingBtn] = useState(false);
+
   const { currentUser } = useContext(AuthContext);
   const { wpProfile, setSendTemplatePopUp } = ChatState();
   useEffect(() => {
@@ -48,6 +53,8 @@ const SendTemplate = (props) => {
       setTemplateData(null);
       return;
     }
+    setHeadVar([]);
+    setBodyVar([]);
     const selectedTempId = parseInt(e.target.value);
 
     const tempDtl = templateList.filter((list) => list.id === selectedTempId);
@@ -94,35 +101,51 @@ const SendTemplate = (props) => {
       temp_attribute: [],
       isLoading: false,
     };
-    const headVariables = tempDtl[0].temp_header.match(/\{\{(\d+)\}\}/g);
-    const bodyVariables = tempDtl[0].temp_body.match(/\{\{(\d+)\}\}/g);
-    setHeadVar(headVariables);
-    setBodyVar(bodyVariables);
-    setTemplatePreView(PreviewTemplateData);
-    setTemplateData(PreviewTemplateData);
-  };
-  const replaceVal = (e, item) => {
-    const updatedValue = { ...bodyValue, [item]: e.target.value };
-    setBodyValue(updatedValue);
-
-    let updatedText = templateData.bodyMessage;
-    for (const key in updatedValue) {
-      if (updatedValue[key] === "") {
-        updatedText = updatedText.replace(key, key);
-      } else {
-        updatedText = updatedText.replace(key, updatedValue[key]);
-      }
+    const hd = JSON.parse(tempDtl[0].temp_header);
+   
+    let headdata;
+    if (hd.text) {
+      const headVariables = hd.text.match(/\{\{(\d+)\}\}/g);
+      setHeadVar(headVariables);
+      headdata = headVariables
+        ? formatMessage(hd.text, headVariables, headValue)
+        : hd.text;
     }
 
+    const bodyVariables = tempDtl[0].temp_body.match(/\{\{(\d+)\}\}/g);
+
+    setBodyVar(bodyVariables);
+
+    setTemplateData(PreviewTemplateData);
+    const bodydata = bodyVariables
+      ? formatMessage(PreviewTemplateData.bodyMessage, bodyVariables, bodyValue)
+      : PreviewTemplateData.bodyMessage;
+
+    setTemplatePreView({
+      ...PreviewTemplateData,
+      bodyMessage: bodydata,
+      headerText: hd.text ? { text: headdata } : hd,
+    });
+  };
+  const replaceBodyVal = (index, value) => {
+    const updatedValues = [...bodyValue];
+    updatedValues[index] = value;
+    setBodyValue(updatedValues);
+    const bodydata = formatMessage(
+      templateData.bodyMessage,
+      bodyVar,
+      updatedValues
+    );
     setTemplatePreView((preState) => ({
       ...preState,
-      bodyMessage: updatedText,
+      bodyMessage: bodydata,
     }));
   };
+
   const sendTemp = async () => {
     setLoadingBtn(true);
-    const queryString = Object.entries(bodyValue)
-      .map(([key, value]) => `${key.replace(/[{}]/g, "")}=${value}`)
+    const queryString = bodyValue
+      .map((value, index) => `${index + 1}=${value}`)
       .join("&");
 
     const numberString = props.mobile.toString();
@@ -133,7 +156,7 @@ const SendTemplate = (props) => {
         currentUser.authkey_parent
       }&mobile=${num}&wid=${templateData.wid}&country_code=${countryCode}&${
         bodyVar?.length > 0 ? queryString : ""
-      }&${headVar?.length > 0 ? `headervalue=${headValue["{{1}}"]}` : ""}`
+      }&${headVar?.length > 0 ? `headervalue=${headValue[0]}` : ""}`
     );
     if (data.LogID === "") {
       toast.error(data.message);
@@ -144,25 +167,38 @@ const SendTemplate = (props) => {
     setLoadingBtn(false);
   };
 
-  const replaceHeadVal = (e, item) => {
-    const updatedValue = { ...headValue, [item]: e.target.value };
-    setHeadValue(updatedValue);
+  const replaceHeadVal = (index, value) => {
+    const updatedValues = [...headValue];
+    updatedValues[index] = value;
+    setHeadValue(updatedValues);
+    const hdData = JSON.parse(templateData.headerText);
 
-    let updatedText = templateData.headerText;
-    for (const key in updatedValue) {
-      if (updatedValue[key] === "") {
-        updatedText = updatedText.replace(key, key);
-      } else {
-        updatedText = updatedText.replace(key, updatedValue[key]);
-      }
-    }
+    const headdata = formatMessage(hdData.text, headVar, updatedValues);
 
-    setTemplatePreView((preState) => ({
-      ...preState,
-      headerText: updatedText,
+    setTemplatePreView((prevState) => ({
+      ...prevState,
+      headerText: {
+        ...prevState.headerText,
+        text: headdata,
+      },
     }));
   };
- 
+
+  const formatMessage = (msg, placeholders, inputValues) => {
+    const parts = msg.split(/(\{\{[0-9]+\}\})/);
+    return parts.map((part, index) => {
+      const placeholderIndex = placeholders.indexOf(part);
+      if (placeholderIndex !== -1) {
+        return (
+          <span key={index} style={{ color: "red" }}>
+            {inputValues[placeholderIndex] || part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <div className="mt-4">
       <div className="container popupheight">
@@ -170,55 +206,54 @@ const SendTemplate = (props) => {
           <div className="col-md-6">
             <label className="formlabel mb-2">Select template</label>
             <div className="selectBox drop-down-icons  mb-3">
-            <select
-              className="form-control"
-              style={{ cursor: "pointer" }}
-              onChange={selectedTemplate}
-            >
-              <option value="">Select Template</option>
-              {templateList.map((item, index) => (
-                <option key={index} value={item.id}>
-                  {item.temp_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="WhatBodyHgt">
-
-            {headVar?.length > 0 && (
-              <div className="mb-3 px-2 py-2 bgGray">
-                <label>Head Variable</label>
-                <div className="input-group">
-                  <span className="input-group-text" id="basic-addon1">
-                    {"{{1}}"}
-                  </span>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="{{1}}"
-                    onChange={(e) => replaceHeadVal(e, "{{1}}")}
-                  />
-                </div>
-              </div>
-            )}
-            {bodyVar?.length > 0 && (
-              <div className="mb-3 px-2 py-2 bgGray">
-                <label className="formlabel mb-2">Body Variable</label>
-                {bodyVar.map((item, i) => (
-                  <div className="input-group mb-2" key={i}>
+              <select
+                className="form-control"
+                style={{ cursor: "pointer" }}
+                onChange={selectedTemplate}
+              >
+                <option value="">Select Template</option>
+                {templateList.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.temp_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="WhatBodyHgt">
+              {headVar?.length > 0 && (
+                <div className="mb-3 px-2 py-2 bgGray">
+                  <label>Head Variable</label>
+                  <div className="input-group">
                     <span className="input-group-text" id="basic-addon1">
-                      {item}
+                      {"{{1}}"}
                     </span>
                     <input
                       type="text"
                       className="form-control"
-                      placeholder={item}
-                      onChange={(e) => replaceVal(e, item)}
+                      placeholder="{{1}}"
+                      onChange={(e) => replaceHeadVal(0, e.target.value)}
                     />
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
+              )}
+              {bodyVar?.length > 0 && (
+                <div className="mb-3 px-2 py-2 bgGray">
+                  <label className="formlabel mb-2">Body Variable</label>
+                  {bodyVar.map((item, i) => (
+                    <div className="input-group mb-2" key={i}>
+                      <span className="input-group-text" id="basic-addon1">
+                        {item}
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder={item}
+                        onChange={(e) => replaceBodyVal(i, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             {templatePreView && (
               <div className="mt-2" style={{ float: "right" }}>
@@ -243,22 +278,24 @@ const SendTemplate = (props) => {
               <TemplatePrev previewData={templatePreView} />
             ) : (
               <div className="whatsappPreview">
-
-                <div 
+                <div
                   className="whatsapp-review whatsapp-bg"
                   style={{ backgroundImage: `url(${bg_whatsapp})` }}
                 />
                 <div className="whatsappFront">
                   <div class="whats-app-header">
-                  <img alt="company img" src={wpProfile.image_url} />
-                    <div class="whatsappPTxt"> <p>{wpProfile.comp_name} </p> </div>
-                  </div>
-                    <div className="msgTxt">
-                      <p className="text-right">
-                        Please select WhatsApp Template to preview
-                      </p>
+                    <img alt="company img" src={wpProfile.image_url} />
+                    <div class="whatsappPTxt">
+                      {" "}
+                      <p>{wpProfile.comp_name} </p>{" "}
                     </div>
                   </div>
+                  <div className="msgTxt">
+                    <p className="text-right">
+                      Please select WhatsApp Template to preview
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
           </div>
