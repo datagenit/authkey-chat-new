@@ -197,7 +197,7 @@ const UserProfile = (props) => {
         </div>
       </div>
 
-      <div className="mt-4">
+      {currentUser.user_type==="agent"&&<div className="mt-4">
         <div className="d-flex me-3 px-3">
           <h6 className="fw-bold">Setting</h6>
         </div>
@@ -217,7 +217,7 @@ const UserProfile = (props) => {
             />
           </div>
         </div>
-      </div>
+      </div>}
       {/* <div>
                     <div className="d-flex">
                         <div className="flex-grow-1">
