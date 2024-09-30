@@ -20,6 +20,8 @@ const Input = (props) => {
   const [fileSize, setFileSize] = useState();
   const [fileType, setFileType] = useState();
   const [emojiStatus, setEmojiStatus] = useState(false);
+  const [sendButton, setSendButton] = useState(false);
+  const [recordingOn, setRecordingOn] = useState(false);
   const [error, setError] = useState({
     error: false,
     errorMessage: "",
@@ -308,6 +310,12 @@ const Input = (props) => {
   const handleTextarea = (e) => {
     setEmojiStatus(false);
     setText(e.target.value);
+    if(e.target.value===""){
+      setSendButton(false);
+    }else{
+      setSendButton(true);
+    }
+    
   };
   useEffect(() => {
     const socket = io(SOCKET_URL);
@@ -393,7 +401,10 @@ const Input = (props) => {
     );
   };
   // console.log(currentUser);
-
+const handleRecordingOn = ()=>{
+  setRecordingOn(true);
+  setSendButton(true);
+}
   return (
     <div style={{ position: "absolute", bottom: "0px", width: "100%" }}>
       <div className="emojiMobilecss" ref={pickerRef}>
@@ -514,7 +525,8 @@ const Input = (props) => {
 
             <div className="row g-0 align-items-center">
               <div className="file_Upload" />
-              <div className="col-auto">
+
+             {recordingOn===false?<><div className="col-auto">
                 <div className="chat-input-links me-md-2">
                   <div
                     className="links-list-item"
@@ -586,11 +598,11 @@ const Input = (props) => {
                     placeholder="Type your message..."
                   ></textarea>
                 </div>
-              </div>
+              </div></>:<div className='col'>hi</div>}
               <div className="col-auto">
                 <div className="chat-input-links ms-2 gap-md-1">
                   <div className="links-list-item">
-                    <button
+                    {sendButton?<button
                       onClick={handleSend}
                       className="btn btn-primary btn-lg chat-send waves-effect waves-light"
                       data-bs-toggle="collapse"
@@ -598,7 +610,17 @@ const Input = (props) => {
                       title="Send message"
                     >
                       <i className="bx bxs-send align-middle" id="submit-btn" />
-                    </button>
+                    </button>:
+                    <button
+                      onClick={handleRecordingOn}
+                      className="btn btn-primary btn-lg chat-send waves-effect waves-light"
+                      data-bs-toggle="collapse"
+                      data-bs-target=".chat-input-collapse1.show"
+                      title="Send message"
+                    >
+                      <i className='bx bxs-microphone align-middle' id="submit-btn"/>
+                     
+                    </button>}
                   </div>
                 </div>
               </div>
