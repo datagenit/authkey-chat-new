@@ -601,7 +601,23 @@ const handleRecordingOn = ()=>{
                     placeholder="Type your message..."
                   ></textarea>
                 </div>
+              </div></>:
+              <div className='col audioContainer'>
+                  <div className="audioBox">
+                    <i className="bx bxs-microphone align-middle mics" />
+                  </div>
+                  <div className="audioTimer">
+                   
+       
+                    <div className="audioplayPause"> <FaPlay /><FaPause /></div>
+                    <div className="audioFrequency"><img src="../icon-sound.gif" alt="sound-graph" /><img src="../icon-sound.gif" class="ml-2" alt="sound-graph"/></div>
+                    <div className="audiotimebox">11:20</div>
+                  </div>
+                  <div className="audioDelete">
+                  <MdDelete />
+                  </div>
               </div>
+              }
               <div className="col-auto">
                 <div className="chat-input-links ms-2 gap-md-1">
                   <div className="links-list-item">
