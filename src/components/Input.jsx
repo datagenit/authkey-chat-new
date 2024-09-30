@@ -6,6 +6,9 @@ import { ChatContext } from "../context/ChatContext";
 import { ChatState } from "../context/AllProviders";
 import SendTemplate from "./SendTemplate";
 import io from "socket.io-client";
+import { MdDelete } from "react-icons/md";
+import { FaPlay, FaPause } from "react-icons/fa";
+
 import { v4 as uuidv4 } from "uuid";
 
 const Input = (props) => {
@@ -598,7 +601,7 @@ const handleRecordingOn = ()=>{
                     placeholder="Type your message..."
                   ></textarea>
                 </div>
-              </div></>:<div className='col'>hi</div>}
+              </div>
               <div className="col-auto">
                 <div className="chat-input-links ms-2 gap-md-1">
                   <div className="links-list-item">
