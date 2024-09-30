@@ -228,7 +228,9 @@ File: Main Css File
 .last-message {
   color: #ababab;
 }
-
+.rce-mbox {
+  max-width: 65%;
+}
 .rce-mbox-location {
   width: 100% !important;
   height: 100% !important;
@@ -247,6 +249,7 @@ File: Main Css File
 .rce-container-lmsg {
   max-width: 270px;
 }
+
 
 .rce-mbox-photo--img img {
   width: 100%  !important;
@@ -2157,11 +2160,11 @@ body[data-layout-mode="dark"] .dark-mode {
   position: relative;
 }
 
-.chat-conversation .chat-conversation-list > li {
+/* .chat-conversation .chat-conversation-list > li {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-}
+} */
 
 .scrollable-chat-container {
   height: 100%; /* Adjust height as needed */
@@ -3173,4 +3176,48 @@ body[data-layout-mode="dark"] .dark-mode {
 }
 .dropbox .dropdown-items {
   background: transparent !important;
+}
+.audioContainer {
+  display: flex;
+  float:right;
+}
+.audioBox, .audioDelete {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 6px;
+}
+.audioBox i,.audioDelete svg, .audioDelete svg {
+  font-size: 24px;
+  cursor: pointer;
+  color: #393939;
+}
+.audioContainer {
+  flex-direction: row-reverse;
+}
+
+.audioBox i.mics {
+  color: red;
+}
+.audioTimer {
+  background: #fff;
+  border-radius: 20px 20px;
+  display: flex;
+  align-self: center;
+  column-gap: 10px;
+  padding:4px 20px;
+  justify-content: center;
+}
+.audiotimebox {
+  font-size: 18px;
+}
+.audioplayPause svg {
+  font-size: 18px;
+  margin-top: 6px;
+  cursor: pointer;
+}
+.ml-2 {
+  margin-left: 5px;
+}
+.audioFrequency img{
+  height: 30px;
 }

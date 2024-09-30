@@ -6,6 +6,9 @@ import { ChatContext } from "../context/ChatContext";
 import { ChatState } from "../context/AllProviders";
 import SendTemplate from "./SendTemplate";
 import io from "socket.io-client";
+import { MdDelete } from "react-icons/md";
+import { FaPlay, FaPause } from "react-icons/fa";
+
 import { v4 as uuidv4 } from "uuid";
 
 const Input = (props) => {
@@ -20,6 +23,8 @@ const Input = (props) => {
   const [fileSize, setFileSize] = useState();
   const [fileType, setFileType] = useState();
   const [emojiStatus, setEmojiStatus] = useState(false);
+  const [sendButton, setSendButton] = useState(false);
+  const [recordingOn, setRecordingOn] = useState(false);
   const [error, setError] = useState({
     error: false,
     errorMessage: "",
@@ -308,6 +313,12 @@ const Input = (props) => {
   const handleTextarea = (e) => {
     setEmojiStatus(false);
     setText(e.target.value);
+    if(e.target.value===""){
+      setSendButton(false);
+    }else{
+      setSendButton(true);
+    }
+    
   };
   useEffect(() => {
     const socket = io(SOCKET_URL);
@@ -393,7 +404,10 @@ const Input = (props) => {
     );
   };
   // console.log(currentUser);
-
+const handleRecordingOn = ()=>{
+  setRecordingOn(true);
+  setSendButton(true);
+}
   return (
     <div style={{ position: "absolute", bottom: "0px", width: "100%" }}>
       <div className="emojiMobilecss" ref={pickerRef}>
@@ -490,7 +504,7 @@ const Input = (props) => {
         )}
       </div>
 
-      <div className="chat-input-section p-3">
+      <div className="chat-input-section p-3 p-lg-4">
         {isOldMsg ? (
           <div className="d-flex justify-content-center align-items-center">
             <h6 style={{ color: "red" }} className="me-4">
@@ -514,7 +528,8 @@ const Input = (props) => {
 
             <div className="row g-0 align-items-center">
               <div className="file_Upload" />
-              <div className="col-auto">
+
+             {recordingOn===false?<><div className="col-auto">
                 <div className="chat-input-links me-md-2">
                   <div
                     className="links-list-item"
@@ -525,14 +540,14 @@ const Input = (props) => {
                   >
                     <button
                       type="button"
-                      className="btn btn-link text-decoration-none btn-lg wavesLight"
+                      className="btn btn-link text-decoration-none btn-lg waves-effect"
                       data-bs-toggle="collapse"
                       data-bs-target="#chatinputmorecollapse"
                       aria-expanded="false"
                       aria-controls="chatinputmorecollapse"
                       onClick={() => setEmojiStatus(false)}
                     >
-                      <i className="bx bx-plus iconsBg align-middle" />
+                      <i className="bx bx-dots-horizontal-rounded align-middle" />
                     </button>
                   </div>
                   <div
@@ -544,14 +559,14 @@ const Input = (props) => {
                   >
                     <button
                       type="button"
-                      className="btn btn-link text-decoration-none btn-lg wavesLight emoji-btn"
+                      className="btn btn-link text-decoration-none btn-lg waves-effect emoji-btn"
                       id="emoji-btn"
                       onClick={toggleEmoji}
                     >
                       {emojiStatus === false ? (
-                        <i className="bx bx-smile align-middle iconsBg"/>
+                        <i className="bx bx-smile align-middle" />
                       ) : (
-                        <i className="bx bx-x align-middle iconsBg" />
+                        <i className="bx bx-x align-middle" />
                       )}
                     </button>
                   </div>
@@ -586,19 +601,45 @@ const Input = (props) => {
                     placeholder="Type your message..."
                   ></textarea>
                 </div>
+              </div></>:
+              <div className='col audioContainer'>
+                  <div className="audioBox">
+                    <i className="bx bxs-microphone align-middle mics" />
+                  </div>
+                  <div className="audioTimer">
+                   
+       
+                    <div className="audioplayPause"> <FaPlay /><FaPause /></div>
+                    <div className="audioFrequency"><img src="../icon-sound.gif" /><img src="../icon-sound.gif" class="ml-2" /></div>
+                    <div className="audiotimebox">11:20</div>
+                  </div>
+                  <div className="audioDelete">
+                  <MdDelete />
+                  </div>
               </div>
+              }
               <div className="col-auto">
                 <div className="chat-input-links ms-2 gap-md-1">
                   <div className="links-list-item">
-                    <button
+                    {sendButton?<button
                       onClick={handleSend}
-                      className="btn btn-primary btn-lg chat-send waves-light"
+                      className="btn btn-primary btn-lg chat-send waves-effect waves-light"
                       data-bs-toggle="collapse"
                       data-bs-target=".chat-input-collapse1.show"
                       title="Send message"
                     >
-                      <i className="bx bxs-send align-middle iconmids" id="submit-btn" />
-                    </button>
+                      <i className="bx bxs-send align-middle" id="submit-btn" />
+                    </button>:
+                    <button
+                      onClick={handleRecordingOn}
+                      className="btn btn-primary btn-lg chat-send waves-effect waves-light"
+                      data-bs-toggle="collapse"
+                      data-bs-target=".chat-input-collapse1.show"
+                      title="Send message"
+                    >
+                      <i className='bx bxs-microphone align-middle' id="submit-btn"/>
+                     
+                    </button>}
                   </div>
                 </div>
               </div>
@@ -609,25 +650,33 @@ const Input = (props) => {
               className={`chat-input-collapse chat-input-collapse1 collapse`}
               id="chatinputmorecollapse"
             >
-              <div className="card docsChat mb-0">
-                <div className="card-body py-2 px-2">
-                  <div className="chatinput-links">
-                    <div className="d-flex flex-column">
-                        <div className="d-flex align-items-center p-1 doclists">
+              <div className="card mb-0">
+                <div className="card-body py-3">
+                  <div className="swiper chatinput-links">
+                    <div className="swiper-wrapper d-flex justify-content-between">
+                      <div className="swiper-slide">
+                        <div className="text-center px-2 position-relative">
+                          <div>
                             <input
                               type="file"
                               style={{ display: "none" }}
                               id="attached-file"
                               onChange={fileHandler}
                             />
-                            <div
+                            <label
                               htmlFor="attached-file"
-                              className="docImg flex-shrink-1 mr-2"
+                              className="avatar-sm mx-auto stretched-link"
                             >
-                                <i className="bx bx-paperclip bgBlue iconsBgs" />
-                            </div>
-                            <div className="docTitle">Attached</div>
+                              <span className="avatar-title font-size-18 bg-soft-primary text-primary rounded-circle">
+                                <i className="bx bx-paperclip" />
+                              </span>
+                            </label>
+                          </div>
+                          <h5 className="font-size-11 text-uppercase mt-3 mb-0 text-body text-truncate">
+                            Attached
+                          </h5>
                         </div>
+                      </div>
                       {/* <div className="swiper-slide">
                     <div className="text-center px-2">
                       <div className="avatar-sm mx-auto">
@@ -642,37 +691,51 @@ const Input = (props) => {
                       </h5>
                     </div>
                   </div> */}
-                      <div className="d-flex align-items-center p-1 doclists ">
+                      <div className="swiper-slide">
+                        <div className="text-center px-2 position-relative">
+                          <div>
                             <input
                               id="galleryfile-input"
                               type="file"
                               className="d-none"
                               onChange={fileHandler}
                             />
-                            <div
+                            <label
                               htmlFor="galleryfile-input"
-                               className="docImg flex-shrink-1 mr-2"
+                              className="avatar-sm mx-auto stretched-link"
                             >
-                                <i className="bx bx-images iconsBgs bgGreen" />
-                            </div>
-                          <div className="docTitle">IMAGE</div>
+                              <span className="avatar-title font-size-18 bg-soft-primary text-primary rounded-circle">
+                                <i className="bx bx-images" />
+                              </span>
+                            </label>
+                          </div>
+                          <h5 className="font-size-11 text-uppercase text-truncate mt-3 mb-0">
+                            IMAGE
+                          </h5>
+                        </div>
                       </div>
-                      <div className="d-flex align-items-center p-1 doclists"> 
+                      <div className="swiper-slide">
+                        <div className="text-center px-2">
+                          <div>
                             <input
                               id="audiofile-input"
                               type="file"
                               className="d-none"
                               onChange={fileHandler}
                             />
-                            <div
+                            <label
                               htmlFor="audiofile-input"
-                             className="docImg flex-shrink-1 bgOrange mr-2"
+                              className="avatar-sm mx-auto stretched-link"
                             >
-                                <i className="bx bx-video iconsBgs" />
-                            </div>
-                          <div className="docTitle">
-                            VIDEO
+                              <span className="avatar-title font-size-18 bg-soft-primary text-primary rounded-circle">
+                                <i className="bx bx-video" />
+                              </span>
+                            </label>
                           </div>
+                          <h5 className="font-size-11 text-uppercase text-truncate mt-3 mb-0">
+                            VIDEO
+                          </h5>
+                        </div>
                       </div>
                       {/* <div className="swiper-slide">
                     <div className="text-center px-2">
