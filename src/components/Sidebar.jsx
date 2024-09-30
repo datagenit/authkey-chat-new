@@ -435,7 +435,7 @@ const SideBar = () => {
                   data-bs-toggle="pill"
                   href="#pills-user"
                   role="tab"
-                ><i className="bx bx-user-circle text-muted ms-1" />
+                >
                   Profile 
                 </a>
                 {/* <a
@@ -453,16 +453,15 @@ const SideBar = () => {
                   data-bs-toggle="pill"
                   href="#pills-change-password"
                   role="tab"
-                > <i className="bx bx-lock-open text-muted ms-1" />
-                  Change Password{" "}
+                > 
+                  Change Password
                  
                 </a>
-                <div className="dropdown-divider" />
                 <button
                   className="dropdown-item d-flex align-items-center justify-content-between"
                   onClick={() => deleteCookie("user")}
                 >
-               <i className="bx bx-log-out-circle text-muted ms-1" />   Log out 
+               Log out 
                 </button>
               </div>
             </li>

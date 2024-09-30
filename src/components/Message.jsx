@@ -61,7 +61,7 @@ const Message = ({ chatData }) => {
         <i className="bx bx-chevron-down" style={{ fontSize: "3em" }} />
       </button>}
       {chatData.map((message, index) => (
-        <li key={index} style={{ width: "98%" }}>
+        <li key={index}>
           {message.req_from === "USER" ? (
             <div style={{ marginLeft: "30px" }}>
               {message.message_type === "TEXT" && (
@@ -116,12 +116,15 @@ const Message = ({ chatData }) => {
               {message.message_type === "DOCUMENT" && (
                 <MessageBox
                   position={"left"}
-                  type={"photo"}
+                  type={"file"}
                   onClick={() => openpdf(message.file_url)}
-                  text={message.image_caption}
+                  text="Document"
                   data={{
-                    uri: docpng,
-                    
+                    uri: message.file_url,
+                    status: {
+                      click: false,
+                      loading: 0,
+                    },
                   }}
                   // className="doc-width"
                   date={message.created}
@@ -192,12 +195,15 @@ const Message = ({ chatData }) => {
               {message.message_type === "document" && (
                 <MessageBox
                   position={"right"}
-                  type={"photo"}
-                  text={message.image_caption}
+                  type={"file"}
+                  text="Document"
                   onClick={() => openpdf(message.file_url)}
                   data={{
-                    uri: docpng,
-                   
+                    uri: message.file_url,
+                    status: {
+                      click: false,
+                      loading: 0,
+                    },
                   }}
                   date={message.created}
                 />

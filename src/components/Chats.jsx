@@ -915,7 +915,7 @@ const Chats = () => {
                     >
                       <i className="mdi mdi-chevron-down" />
                     </button>
-                    <ul className="dropdown-menu">
+                    <ul className="dropdown-menu dropbox">
                       <li>
                         <button
                           className="dropdown-items"
@@ -1014,7 +1014,7 @@ const Chats = () => {
                       <div
                         className={`${
                           item.read_status === 1 ? null : "text-bold"
-                        } text-truncate flex flex-grow-1`}
+                        } text-truncate flex flex-grow-1 font-size-13`}
                       >
                         {item.content}
                       </div>

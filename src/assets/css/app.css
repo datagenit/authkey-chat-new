@@ -229,21 +229,32 @@ File: Main Css File
   color: #ababab;
 }
 
-.rce-container-mbox {
-  width: 98%;
-}
-.rce-mbox {
-  max-width: 50%;
-}
 .rce-mbox-location {
   width: 100% !important;
   height: 100% !important;
 }
 .rce-mbox-file {
-  width: 21em;
+  width: 300px;
+  max-width:100%;
 }
+.rce-mbox-file>button {
+  margin:0px 0px !important;
+}
+.rce-mbox-photo--img, .rce-mbox-video--video {
+  max-height: 100% !important;
+  max-width: 246px;
+}
+.rce-container-lmsg {
+  max-width: 270px;
+}
+
 .rce-mbox-photo--img img {
-  width: 100%;
+  width: 100%  !important;
+  max-width:100%  !important;
+  min-height: 100% !important;
+}
+.rce-mbox-text {
+  color: #111b21;
 }
 .rce-mbox-text:after {
   content: none !important;
@@ -2489,9 +2500,9 @@ body[data-layout-mode="dark"] .dark-mode {
 
 .chat-input-section .chat-input-collapse {
   position: absolute;
-  bottom: 92px;
+  bottom: 80px;
   right: 0;
-  left: 0;
+  left: 18px;
   border-top: 1px solid var(--bs-border-color);
   overflow: hidden;
 }
@@ -2583,9 +2594,12 @@ body[data-layout-mode="dark"] .dark-mode {
   -webkit-box-shadow: none;
   box-shadow: none;
   padding: 0;
-  font-size: 22px;
   width: 43px;
   height: 43px;
+  border-radius: 50% 50%;
+}
+.chat-input-links .links-list-item > .wavesLight:hover {
+  background: rgba(11, 20, 26, 0.1);
 }
 
 .chat-input-links .links-list-item > .btn.btn-link {
@@ -3103,4 +3117,60 @@ body[data-layout-mode="dark"] .dark-mode {
   top: 14px;
   right: 1rem;
   transition: all .2s ease-out;
+}
+
+.rce-mbox-left-notch {
+    left: -8px !important;
+    top: -2px !important;
+    width: 11px !important;
+}
+.rce-mbox-right-notch {
+    right: -9px !important;
+    top: -2px !important;
+    width: 11px !important;
+}
+.badge{
+  padding: .4em .6em;
+}
+.iconmids {
+  position: relative;
+  top: -2px;
+}
+.iconsBg {
+  font-size: 30px;
+}
+.iconsBgs {
+  font-size: 26px;
+}
+.docsChat {
+  background: #fff;
+  width: 200px;
+  box-shadow: 0 2px 5px 0 rgba(11, 20, 6, .26), 0 2px 10px 0 rgba(11, 20, 6, .16);
+  border-radius: 20px;
+
+}
+.mr-2 {
+  margin-right: 15px;
+}
+.doclists {
+  border-radius: 5px;
+}
+.doclists:hover {
+  background:rgba(226, 225, 225, 0.5);
+  cursor: pointer;
+}
+.bgBlue {
+  color:  rgba(26,115,233,1);
+}
+.bgOrange {
+  color:  rgba(255,132,54,1);
+}
+.bgYellow {
+  color: rgba(255,210,63,1);
+}
+.bgGreen {
+  color: rgba(37,211,102,1);
+}
+.dropbox .dropdown-items {
+  background: transparent !important;
 }
