@@ -7,8 +7,8 @@ import { ChatState } from "../context/AllProviders";
 import SendTemplate from "./SendTemplate";
 import io from "socket.io-client";
 import { MdDelete } from "react-icons/md";
-import { FaPlay, FaPause } from "react-icons/fa";
-
+import { FaPlay, FaPause, FaRegStopCircle } from "react-icons/fa";
+import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 
 const Input = (props) => {
@@ -24,7 +24,13 @@ const Input = (props) => {
   const [fileType, setFileType] = useState();
   const [emojiStatus, setEmojiStatus] = useState(false);
   const [sendButton, setSendButton] = useState(false);
-  const [recordingOn, setRecordingOn] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [audioURL, setAudioURL] = useState(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const timerRef = useRef(null);
   const [error, setError] = useState({
     error: false,
     errorMessage: "",
@@ -32,7 +38,7 @@ const Input = (props) => {
   });
   const { currentUser } = useContext(AuthContext);
   const { dispatch } = useContext(ChatContext);
-  
+
   const {
     isViewerOpen,
     setIsViewerOpen,
@@ -53,6 +59,9 @@ const Input = (props) => {
       });
     }, 5000);
   }, [error]);
+  useEffect(() => {
+    return () => clearInterval(timerRef.current);
+  }, []);
   const togglePopup = () => {
     setShowPrev(!showPrev);
     setFileSize();
@@ -61,20 +70,41 @@ const Input = (props) => {
     setPreviewUrl("");
     setFileType();
   };
+  const resetState = () => {
+    setAudioURL(null);
+    setSendButton(false);
+    setIsRecording(false);
+    setPreviewUrl("");
+    setFileSize(undefined);
+    setFileType(undefined);
+    setShowPrev(false);
+    setFile(null);
+    setButtonLoader(false);
+    setText("");
+    setCaption("");
+  };
   const handleSend = async () => {
     setEmojiStatus(false);
     const uid = uuidv4();
+
     if (file) {
       setButtonLoader(true);
       let url = await uploadWhatsAppMedia();
+
       const msg = {};
       const { data } = await sendMessage({
-        agent_id:currentUser.user_type==="admin"?"1":currentUser.user_id,
-        agent_name:currentUser.user_type==="admin"?"admin":currentUser.name,
-        manager_id:currentUser.user_type==="admin"?"1":currentUser.manager,
-        manager_name:currentUser.user_type==="admin"?"admin":currentUser.manager_name,
-        team_id:currentUser.user_type==="admin"?"1":currentUser.team,
-        team_name:currentUser.user_type==="admin"?"admin":currentUser.team_name,
+        agent_id: currentUser.user_type === "admin" ? "1" : currentUser.user_id,
+        agent_name:
+          currentUser.user_type === "admin" ? "admin" : currentUser.name,
+        manager_id:
+          currentUser.user_type === "admin" ? "1" : currentUser.manager,
+        manager_name:
+          currentUser.user_type === "admin"
+            ? "admin"
+            : currentUser.manager_name,
+        team_id: currentUser.user_type === "admin" ? "1" : currentUser.team,
+        team_name:
+          currentUser.user_type === "admin" ? "admin" : currentUser.team_name,
         token: currentUser.parent_token,
         user_id: currentUser.parent_id,
         method: "media_reply",
@@ -84,7 +114,6 @@ const Input = (props) => {
         brand_number: currentUser.brand_number,
         mobile: props.selectedMobile,
         content: text,
-      
       });
 
       if (data.success === true) {
@@ -98,23 +127,9 @@ const Input = (props) => {
             name: props.convData.selectedName,
           },
         });
-        setPreviewUrl("");
-        setFileSize();
-        setFileType(undefined);
-        setShowPrev(false);
-        setFile(null);
-        setButtonLoader(false);
-        setText("");
-        setCaption("");
+        resetState();
       } else {
-        setShowPrev(false);
-        setPreviewUrl("");
-        setFileSize();
-        setFile(null);
-        setFileType(undefined);
-        setButtonLoader(false);
-        setText("");
-        setCaption("");
+        resetState();
         setError({
           error: true,
           errorMessage: data.message,
@@ -124,12 +139,18 @@ const Input = (props) => {
     } else {
       const date = new Date();
       const msg = {
-        agent_id:currentUser.user_type==="admin"?"1":currentUser.user_id,
-        agent_name:currentUser.user_type==="admin"?"admin":currentUser.name,
-        manager_id:currentUser.user_type==="admin"?"1":currentUser.manager,
-        manager_name:currentUser.user_type==="admin"?"admin":currentUser.manager_name,
-        team_id:currentUser.user_type==="admin"?"1":currentUser.team,
-        team_name:currentUser.user_type==="admin"?"admin":currentUser.team_name,
+        agent_id: currentUser.user_type === "admin" ? "1" : currentUser.user_id,
+        agent_name:
+          currentUser.user_type === "admin" ? "admin" : currentUser.name,
+        manager_id:
+          currentUser.user_type === "admin" ? "1" : currentUser.manager,
+        manager_name:
+          currentUser.user_type === "admin"
+            ? "admin"
+            : currentUser.manager_name,
+        team_id: currentUser.user_type === "admin" ? "1" : currentUser.team,
+        team_name:
+          currentUser.user_type === "admin" ? "admin" : currentUser.team_name,
         track_id: uid,
         mobile: props.selectedMobile,
         brand_number: currentUser.brand_number,
@@ -155,12 +176,18 @@ const Input = (props) => {
       });
 
       let data = {
-        agent_id:currentUser.user_type==="admin"?"1":currentUser.user_id,
-        agent_name:currentUser.user_type==="admin"?"admin":currentUser.name,
-        manager_id:currentUser.user_type==="admin"?"1":currentUser.manager,
-        manager_name:currentUser.user_type==="admin"?"admin":currentUser.manager_name,
-        team_id:currentUser.user_type==="admin"?"1":currentUser.team,
-        team_name:currentUser.user_type==="admin"?"admin":currentUser.team_name,
+        agent_id: currentUser.user_type === "admin" ? "1" : currentUser.user_id,
+        agent_name:
+          currentUser.user_type === "admin" ? "admin" : currentUser.name,
+        manager_id:
+          currentUser.user_type === "admin" ? "1" : currentUser.manager,
+        manager_name:
+          currentUser.user_type === "admin"
+            ? "admin"
+            : currentUser.manager_name,
+        team_id: currentUser.user_type === "admin" ? "1" : currentUser.team,
+        team_name:
+          currentUser.user_type === "admin" ? "admin" : currentUser.team_name,
         track_id: uid,
         token: currentUser.parent_token,
         user_id: currentUser.parent_id,
@@ -178,7 +205,6 @@ const Input = (props) => {
             }
             return chatdata;
           });
-         
 
           dispatch({
             type: "CHANGE_USER",
@@ -240,7 +266,33 @@ const Input = (props) => {
       setPreviewUrl("");
     }
   };
+  const uploadRecording = async (rec) => {
+    try {
+      var data = await new Promise((resolve, reject) => {
+        const data = new FormData();
+        data.append("amdfile", rec.file, "recording.mp3");
+        data.append("doc_name", "test MK");
+        data.append("doc_type", rec.fileType);
+        data.append("input_file_type", "convert_recording");
+        data.append("user_id", currentUser.parent_id);
+        data.append("token", currentUser.parent_token);
+        data.append("method", "send_recording");
 
+        fetch(`${BASE_URL}/uploadFileWhatsapp.php`, {
+          method: "POST",
+          body: data,
+        }).then((result) => {
+          result.json().then((resp) => {
+            resolve(resp.url);
+          });
+        });
+      });
+      // setFile(undefined);
+      return data;
+    } catch (error) {
+      console.log("error");
+    }
+  };
   const uploadWhatsAppMedia = async () => {
     try {
       var data = await new Promise((resolve, reject) => {
@@ -251,7 +303,7 @@ const Input = (props) => {
         data.append("user_id", currentUser.parent_id);
         data.append("token", currentUser.parent_token);
         data.append("method", "create");
-        let url = "";
+
         fetch(`${BASE_URL}/uploadFileWhatsapp.php`, {
           method: "POST",
           body: data,
@@ -313,12 +365,11 @@ const Input = (props) => {
   const handleTextarea = (e) => {
     setEmojiStatus(false);
     setText(e.target.value);
-    if(e.target.value===""){
+    if (e.target.value === "") {
       setSendButton(false);
-    }else{
+    } else {
       setSendButton(true);
     }
-    
   };
   useEffect(() => {
     const socket = io(SOCKET_URL);
@@ -403,11 +454,204 @@ const Input = (props) => {
       selectionStart + emojidata.emoji.length
     );
   };
-  // console.log(currentUser);
-const handleRecordingOn = ()=>{
-  setRecordingOn(true);
-  setSendButton(true);
+
+  const formatTime = (totalSeconds) => {
+    const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+    const seconds = String(totalSeconds % 60).padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
+  const startRecording = async () => {
+    setSendButton(true);
+    setIsRecording(true);
+    setIsPaused(false);
+    setRecordingTime(0);
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    mediaRecorderRef.current = new MediaRecorder(stream);
+    mediaRecorderRef.current.ondataavailable = (event) => {
+      audioChunksRef.current.push(event.data);
+    };
+
+    mediaRecorderRef.current.onstop = async () => {
+      
+      audioChunksRef.current = []
+    };
+
+    mediaRecorderRef.current.start();
+
+    timerRef.current = setInterval(() => {
+      setRecordingTime((prevTime) => prevTime + 1);
+    }, 1000);
+  };
+  const stopRecording = async() => {
+    clearInterval(timerRef.current);
+
+  
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop(); 
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    }
+    audioChunksRef.current = [];
+    setAudioURL(null);
+    setSendButton(false);
+    setIsRecording(false);
+    setIsPaused(false);
+    setFileType(undefined);
+    setFile(null);
+    resetState();
+    await navigator.mediaDevices.getUserMedia({ audio: false });
+  };
+  const prevRec = () => {
+    setIsPaused(false);
+    clearInterval(timerRef.current);
+    mediaRecorderRef.current.onstop = async () => {
+      const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+      audioChunksRef.current = [];
+      setAudioURL(URL.createObjectURL(audioBlob));
+      const type = audioBlob.type;
+      setFileType(type);
+      setFile(audioBlob);
+    };
+    mediaRecorderRef.current.stop();
+  };
+  const pauseRecording = () => {
+    setIsPaused(true);
+    clearInterval(timerRef.current);
+    mediaRecorderRef.current.pause();
+  };
+  const resumeRecording = () => {
+    setIsPaused(false);
+    timerRef.current = setInterval(() => {
+      setRecordingTime((prevTime) => prevTime + 1);
+    }, 1000); // Restart the timer
+    mediaRecorderRef.current.resume();
+  };
+  const handleSendRec = async () => {
+    if(fileType&&file){
+      const recFile = {
+        file: file,
+        fileType:fileType
+      };
+      sendRecFunc(recFile,audioURL);
+      return;
+    }
+    let fileData, fileTp, localUrl;
+
+    mediaRecorderRef.current.onstop = async () => {
+      const audioBlob = new Blob(audioChunksRef.current, {
+        type: "audio/mpeg",
+      });
+      audioChunksRef.current = [];
+      localUrl = URL.createObjectURL(audioBlob);
+      fileTp = audioBlob.type;
+      fileData = audioBlob;
+
+      const recFile = {
+        file: fileData,
+        fileType:fileTp
+      };
+      sendRecFunc(recFile,localUrl);
+    };
+
+    setIsPaused(false);
+    clearInterval(timerRef.current);
+    mediaRecorderRef.current.stop();
+  };
+const sendRecFunc=async(recFile,localUrl)=>{
+  const uid = uuidv4();
+  const date = new Date();
+      const preData = {
+        track_id: uid,
+        agent_id: currentUser.user_type === "admin" ? "1" : currentUser.user_id,
+        agent_name:
+          currentUser.user_type === "admin" ? "admin" : currentUser.name,
+        manager_id:
+          currentUser.user_type === "admin" ? "1" : currentUser.manager,
+        manager_name:
+          currentUser.user_type === "admin"
+            ? "admin"
+            : currentUser.manager_name,
+        team_id: currentUser.user_type === "admin" ? "1" : currentUser.team,
+        team_name:
+          currentUser.user_type === "admin" ? "admin" : currentUser.team_name,
+        req_from: "AGENT_REPLY",
+        method: "media_reply",
+        file_url: localUrl,
+        caption: "",
+        message_type: "AUDIO",
+        brand_number: currentUser.brand_number,
+        mobile: props.selectedMobile,
+        content: "",
+        status: "pending",
+        created: date,
+        message_content: "",
+      };
+      let newdata = [...props.convData.conversion, preData];
+
+      dispatch({
+        type: "CHANGE_USER",
+        payload: {
+          mobile: props.selectedMobile,
+          conversation: newdata,
+          name: props.convData.selectedName,
+        },
+      });
+      resetState();
+  try {
+    const rec_url = await uploadRecording(recFile);
+
+    const { data } = await sendMessage({
+      track_id: uid,
+      agent_id:
+        currentUser.user_type === "admin" ? "1" : currentUser.user_id,
+      agent_name:
+        currentUser.user_type === "admin" ? "admin" : currentUser.name,
+      manager_id:
+        currentUser.user_type === "admin" ? "1" : currentUser.manager,
+      manager_name:
+        currentUser.user_type === "admin"
+          ? "admin"
+          : currentUser.manager_name,
+      team_id: currentUser.user_type === "admin" ? "1" : currentUser.team,
+      team_name:
+        currentUser.user_type === "admin" ? "admin" : currentUser.team_name,
+      token: currentUser.parent_token,
+      user_id: currentUser.parent_id,
+      method: "media_reply",
+      attachment_url: rec_url,
+      caption: "",
+      message_type: "AUDIO",
+      brand_number: currentUser.brand_number,
+      mobile: props.selectedMobile,
+      content: "",
+    });
+
+    if (data.success === true) {
+      const updatedChat = newdata.map((chatdata) => {
+        if (chatdata.track_id === data.track_id) {
+          return { ...chatdata, status: "Submitted", file_url: rec_url };
+        }
+        return chatdata;
+      });
+      dispatch({
+        type: "CHANGE_USER",
+        payload: {
+          mobile: props.selectedMobile,
+          conversation: updatedChat,
+          name: props.convData.selectedName,
+        },
+      });
+    } else {
+      resetState();
+      toast.error(data.message);
+    }
+  } catch (error) {
+    toast.error(error.message);
+    console.log("Error sending message:", error);
+  }
 }
+
+
   return (
     <div style={{ position: "absolute", bottom: "0px", width: "100%" }}>
       <div className="emojiMobilecss" ref={pickerRef}>
@@ -529,56 +773,58 @@ const handleRecordingOn = ()=>{
             <div className="row g-0 align-items-center">
               <div className="file_Upload" />
 
-             {recordingOn===false?<><div className="col-auto">
-                <div className="chat-input-links me-md-2">
-                  <div
-                    className="links-list-item"
-                    data-bs-toggle="tooltip"
-                    data-bs-trigger="hover"
-                    data-bs-placement="top"
-                    title="file"
-                  >
-                    <button
-                      type="button"
-                      className="btn btn-link text-decoration-none btn-lg waves-effect"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#chatinputmorecollapse"
-                      aria-expanded="false"
-                      aria-controls="chatinputmorecollapse"
-                      onClick={() => setEmojiStatus(false)}
-                    >
-                      <i className="bx bx-dots-horizontal-rounded align-middle" />
-                    </button>
+              {isRecording === false ? (
+                <>
+                  <div className="col-auto">
+                    <div className="chat-input-links me-md-2">
+                      <div
+                        className="links-list-item"
+                        data-bs-toggle="tooltip"
+                        data-bs-trigger="hover"
+                        data-bs-placement="top"
+                        title="file"
+                      >
+                        <button
+                          type="button"
+                          className="btn btn-link text-decoration-none btn-lg waves-effect"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#chatinputmorecollapse"
+                          aria-expanded="false"
+                          aria-controls="chatinputmorecollapse"
+                          onClick={() => setEmojiStatus(false)}
+                        >
+                          <i className="bx bx-dots-horizontal-rounded align-middle" />
+                        </button>
+                      </div>
+                      <div
+                        className="links-list-item"
+                        data-bs-toggle="tooltip"
+                        data-bs-trigger="hover"
+                        data-bs-placement="top"
+                        title="Emoji"
+                      >
+                        <button
+                          type="button"
+                          className="btn btn-link text-decoration-none btn-lg waves-effect emoji-btn"
+                          id="emoji-btn"
+                          onClick={toggleEmoji}
+                        >
+                          {emojiStatus === false ? (
+                            <i className="bx bx-smile align-middle" />
+                          ) : (
+                            <i className="bx bx-x align-middle" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div
-                    className="links-list-item"
-                    data-bs-toggle="tooltip"
-                    data-bs-trigger="hover"
-                    data-bs-placement="top"
-                    title="Emoji"
-                  >
-                    <button
-                      type="button"
-                      className="btn btn-link text-decoration-none btn-lg waves-effect emoji-btn"
-                      id="emoji-btn"
-                      onClick={toggleEmoji}
-                    >
-                      {emojiStatus === false ? (
-                        <i className="bx bx-smile align-middle" />
-                      ) : (
-                        <i className="bx bx-x align-middle" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
 
-              <div className="col">
-                <div className="position-relative">
-                  <div className="chat-input-feedback">
-                    Please Enter a Message
-                  </div>
-                  {/* <input
+                  <div className="col">
+                    <div className="position-relative">
+                      <div className="chat-input-feedback">
+                        Please Enter a Message
+                      </div>
+                      {/* <input
                 autoComplete="off"
                 type="text"
                 onChange={(e) => setText(e.target.value)}
@@ -590,56 +836,84 @@ const handleRecordingOn = ()=>{
                 placeholder="Type your message..."
               /> */}
 
-                  <textarea
-                    ref={textareaRef}
-                    onChange={handleTextarea}
-                    onKeyPress={(e) => handleKeyPress(e)}
-                    className="form-control form-control-lg chat-input"
-                    rows="1"
-                    value={text}
-                    id="chat-input"
-                    placeholder="Type your message..."
-                  ></textarea>
-                </div>
-              </div></>:
-              <div className='col audioContainer'>
+                      <textarea
+                        ref={textareaRef}
+                        onChange={handleTextarea}
+                        onKeyPress={(e) => handleKeyPress(e)}
+                        className="form-control form-control-lg chat-input"
+                        rows="1"
+                        value={text}
+                        id="chat-input"
+                        placeholder="Type your message..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="col audioContainer">
                   <div className="audioBox">
                     <i className="bx bxs-microphone align-middle mics" />
                   </div>
-                  <div className="audioTimer">
-                   
-       
-                    <div className="audioplayPause"> <FaPlay /><FaPause /></div>
-                    <div className="audioFrequency"><img src="../icon-sound.gif" alt="sound-graph" /><img src="../icon-sound.gif" class="ml-2" alt="sound-graph"/></div>
-                    <div className="audiotimebox">11:20</div>
-                  </div>
+                  {!audioURL ? (
+                    <div className="audioTimer">
+                      <div className="audioplayPause">
+                        {" "}
+                        <FaRegStopCircle className="me-2" onClick={prevRec} />
+                        {isRecording && !isPaused && (
+                          <FaPause onClick={pauseRecording} />
+                        )}
+                        {isRecording && isPaused && (
+                          <FaPlay onClick={resumeRecording} />
+                        )}
+                      </div>
+                      <div className="audioFrequency">
+                        <img src="../icon-sound.gif" alt="sound-graph" />
+                        <img
+                          src="../icon-sound.gif"
+                          className="ml-2"
+                          alt="sound-graph"
+                        />
+                      </div>
+                      <div className="audiotimebox">
+                        {" "}
+                        {formatTime(recordingTime)}
+                      </div>
+                    </div>
+                  ) : (
+                    <audio controls src={audioURL}></audio>
+                  )}
                   <div className="audioDelete">
-                  <MdDelete />
+                    {isRecording && <MdDelete onClick={stopRecording} />}
                   </div>
-              </div>
-              }
+                </div>
+              )}
               <div className="col-auto">
                 <div className="chat-input-links ms-2 gap-md-1">
                   <div className="links-list-item">
-                    {sendButton?<button
-                      onClick={handleSend}
-                      className="btn btn-primary btn-lg chat-send waves-effect waves-light"
-                      data-bs-toggle="collapse"
-                      data-bs-target=".chat-input-collapse1.show"
-                      title="Send message"
-                    >
-                      <i className="bx bxs-send align-middle" id="submit-btn" />
-                    </button>:
-                    <button
-                      onClick={handleRecordingOn}
-                      className="btn btn-primary btn-lg chat-send waves-effect waves-light"
-                      data-bs-toggle="collapse"
-                      data-bs-target=".chat-input-collapse1.show"
-                      title="Send message"
-                    >
-                      <i className='bx bxs-microphone align-middle' id="submit-btn"/>
-                     
-                    </button>}
+                    {sendButton ? (
+                      <button
+                        onClick={isRecording ? handleSendRec : handleSend}
+                        className="btn btn-primary btn-lg chat-send waves-effect waves-light"
+                        data-bs-toggle="collapse"
+                        data-bs-target=".chat-input-collapse1.show"
+                        title="Send message"
+                      >
+                        <i
+                          className="bx bxs-send align-middle"
+                          id="submit-btn"
+                        />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={startRecording}
+                        className="btn btn-primary btn-lg chat-send waves-effect waves-light"
+                        data-bs-toggle="collapse"
+                        data-bs-target=".chat-input-collapse1.show"
+                        title="Send message"
+                      >
+                        <i className="bx bxs-microphone align-middle" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -673,7 +947,7 @@ const handleRecordingOn = ()=>{
                             </label>
                           </div>
                           <h5 className="font-size-11 text-uppercase mt-3 mb-0 text-body text-truncate">
-                            Attached
+                          Attached
                           </h5>
                         </div>
                       </div>
@@ -821,7 +1095,8 @@ const handleRecordingOn = ()=>{
           <div className="assign-popup-content-agent w-50">
             <div style={{ float: "right", cursor: "pointer" }}>
               <i
-                className="bx bx-x float-right" style={{fontSize: "26px"}}
+                className="bx bx-x float-right"
+                style={{ fontSize: "26px" }}
                 onClick={() => setSendTemplatePopUp(false)}
               ></i>
             </div>

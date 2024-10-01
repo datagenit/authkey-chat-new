@@ -213,6 +213,7 @@ const Message = ({ chatData }) => {
                   position={"right"}
                   type={"audio"}
                   text={message.image_caption}
+                  status={message.status==="pending"?"sent":"received"}
                   data={{
                     audioURL: message.file_url,
                   }}

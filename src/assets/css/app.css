@@ -2505,7 +2505,7 @@ body[data-layout-mode="dark"] .dark-mode {
   position: absolute;
   bottom: 80px;
   right: 0;
-  left: 18px;
+  left: 0px;
   border-top: 1px solid var(--bs-border-color);
   overflow: hidden;
 }
