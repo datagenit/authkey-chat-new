@@ -37,7 +37,7 @@ const AllProvider = ({ children }) => {
     const userInfo = userCookie ? JSON.parse(userCookie) : null;
     const currentuser=userInfo?.data;
     const socketconn = io(SOCKET_URL);
-    if (currentuser.parent_id) {
+    if (currentuser) {
       socketconn.emit("setup", currentuser);
     }
     setSocket(socketconn);
