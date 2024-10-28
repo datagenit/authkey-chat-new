@@ -13,7 +13,7 @@ const LeftMenu = () => {
   }, []);
   return (
     <>
-      <div className="flex-lg-column" style={{ marginRight: "4.5rem" }}>
+      <div className="flex-lg-column margnRight">
         <div className="side-menu flex-lg-column my-0 sidemenu-navigation left-menu">
           <ul className="nav nav-pills side-menu-nav" role="tablist">
             <li
@@ -38,6 +38,7 @@ const LeftMenu = () => {
             >
               <Link to="/dashboard" className="nav-link">
                 <i className="mdi mdi-message-text-outline" />
+                <span className="iconicTxt">Chats</span>
               </Link>
             </li>
             <li
@@ -50,11 +51,12 @@ const LeftMenu = () => {
             >
               <Link to="/agent-management/agent" className="nav-link active">
                 <i className="mdi mdi-account-tie-outline"></i>
+                <span className="iconicTxt">Agent</span>
               </Link>
             </li>
 
             <li
-              className="nav-item mt-auto dropdown profile-user-dropdown"
+              className="nav-item marginAuto dropdown profile-user-dropdown"
               data-bs-toggle="tooltip"
               data-bs-placement="right"
               data-bs-trigger="hover"
@@ -69,20 +71,20 @@ const LeftMenu = () => {
                 aria-expanded="false"
               >
                 <i className="mdi mdi-account-cog-outline" />
+                <span className="iconicTxt">Account</span>
               </div>
               <div className="dropdown-menu">
                 <Link
                   to="/dashboard?tab=user"
                   className="dropdown-item d-flex align-items-center justify-content-between"
                 >
-                  Profile <i className="bx bx-user-circle text-muted ms-1" />
+                  Profile 
                 </Link>
-                <div className="dropdown-divider" />
                 <button
                   className="dropdown-item d-flex align-items-center justify-content-between"
                   onClick={() => deleteCookie("user")}
                 >
-                  Log out <i className="bx bx-log-out-circle text-muted ms-1" />
+                  Log out 
                 </button>
               </div>
             </li>

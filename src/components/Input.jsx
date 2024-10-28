@@ -10,6 +10,7 @@ import { MdDelete } from "react-icons/md";
 import { FaPlay, FaPause, FaRegStopCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
+import { FaPlus } from "react-icons/fa6";
 
 const Input = (props) => {
   const textareaRef = useRef(null);
@@ -800,14 +801,14 @@ const sendRecFunc=async(recFile,localUrl)=>{
                       >
                         <button
                           type="button"
-                          className="btn btn-link text-decoration-none btn-lg waves-effect"
+                          className="btn btn-link text-decoration-none btn-lg waves-effect iconshovers"
                           data-bs-toggle="collapse"
                           data-bs-target="#chatinputmorecollapse"
                           aria-expanded="false"
                           aria-controls="chatinputmorecollapse"
                           onClick={() => setEmojiStatus(false)}
                         >
-                          <i className="bx bx-dots-horizontal-rounded align-middle" />
+                            <FaPlus className="align-middle iconsBgs" />
                         </button>
                       </div>
                       <div
@@ -819,14 +820,14 @@ const sendRecFunc=async(recFile,localUrl)=>{
                       >
                         <button
                           type="button"
-                          className="btn btn-link text-decoration-none btn-lg waves-effect emoji-btn"
+                          className="btn btn-link text-decoration-none btn-lg waves-effect emoji-btn iconshovers"
                           id="emoji-btn"
                           onClick={toggleEmoji}
                         >
                           {emojiStatus === false ? (
-                            <i className="bx bx-smile align-middle" />
+                            <i className="bx bx-smile iconsBgs align-middle" />
                           ) : (
-                            <i className="bx bx-x align-middle" />
+                            <i className="bx bx-x iconsBg align-middle" />
                           )}
                         </button>
                       </div>
@@ -939,30 +940,20 @@ const sendRecFunc=async(recFile,localUrl)=>{
               id="chatinputmorecollapse"
             >
               <div className="card mb-0">
-                <div className="card-body py-3">
-                  <div className="swiper chatinput-links">
-                    <div className="swiper-wrapper d-flex justify-content-between">
-                      <div className="swiper-slide">
-                        <div className="text-center px-2 position-relative">
-                          <div>
+              <div className="card-body py-2 px-2">
+                <div className="swiper chatinput-links">
+                    <div className="swiper-wrapper d-flex flex-column">
+                      <div className="swiper-slide swiperhover py-1 px-2">
+                        <div className="text-center position-relative d-flex">
                             <input
                               type="file"
                               style={{ display: "none" }}
                               id="attached-file"
                               onChange={fileHandler}
                             />
-                            <label
-                              htmlFor="attached-file"
-                              className="avatar-sm mx-auto stretched-link"
-                            >
-                              <span className="avatar-title font-size-18 bg-soft-primary text-primary rounded-circle">
-                                <i className="bx bx-paperclip" />
-                              </span>
+                            <label htmlFor="attached-file" className="attachFiles"><i className="bx bx-paperclip iconsBgs bgBlue" />
+                            <div className="font-size-16 ms-2 text-body text-truncate">Attached</div>
                             </label>
-                          </div>
-                          <h5 className="font-size-11 text-uppercase mt-3 mb-0 text-body text-truncate">
-                          Attached
-                          </h5>
                         </div>
                       </div>
                       {/* <div className="swiper-slide">
@@ -979,50 +970,34 @@ const sendRecFunc=async(recFile,localUrl)=>{
                       </h5>
                     </div>
                   </div> */}
-                      <div className="swiper-slide">
-                        <div className="text-center px-2 position-relative">
-                          <div>
+                      <div className="swiper-slide swiperhover py-1 px-2">
+                        <div className="text-center position-relative d-flex">
                             <input
                               id="galleryfile-input"
                               type="file"
                               className="d-none"
                               onChange={fileHandler}
                             />
-                            <label
-                              htmlFor="galleryfile-input"
-                              className="avatar-sm mx-auto stretched-link"
-                            >
-                              <span className="avatar-title font-size-18 bg-soft-primary text-primary rounded-circle">
-                                <i className="bx bx-images" />
-                              </span>
+                            <label htmlFor="galleryfile-input" className="attachFiles">
+                                <i className="bx bx-images iconsBgs bgOrange" />
+                                <div className="font-size-16 ms-2 text-body text-truncate">Image</div>
                             </label>
-                          </div>
-                          <h5 className="font-size-11 text-uppercase text-truncate mt-3 mb-0">
-                            IMAGE
-                          </h5>
+                          
                         </div>
                       </div>
-                      <div className="swiper-slide">
-                        <div className="text-center px-2">
-                          <div>
+                      <div className="swiper-slide swiperhover py-1 px-2">
+                        <div className="text-center position-relative d-flex">
                             <input
                               id="audiofile-input"
                               type="file"
                               className="d-none"
                               onChange={fileHandler}
                             />
-                            <label
-                              htmlFor="audiofile-input"
-                              className="avatar-sm mx-auto stretched-link"
-                            >
-                              <span className="avatar-title font-size-18 bg-soft-primary text-primary rounded-circle">
-                                <i className="bx bx-video" />
-                              </span>
+                            <label htmlFor="audiofile-input" className="attachFiles">
+                                <i className="bx bx-video iconsBgs bgGreen" />
+                                <div className="font-size-15 ms-2 text-body text-truncate">Video</div>
                             </label>
-                          </div>
-                          <h5 className="font-size-11 text-uppercase text-truncate mt-3 mb-0">
-                            VIDEO
-                          </h5>
+                         
                         </div>
                       </div>
                       {/* <div className="swiper-slide">

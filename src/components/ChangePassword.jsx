@@ -48,7 +48,11 @@ const ChangePassword = () => {
     setLoading(false);
   };
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
+    <div className="d-flex justify-content-center bg-gray bgH flex-column">
+    <div className="user-profile-img p-3 bg-white">
+      <h4 className="fw-bold">Change Password</h4>
+    </div>
+    <div class="px-4 py-4">
       <form onSubmit={handleChangePassword}>
         <div className="form-group">
           <label >Current Password</label>
@@ -134,6 +138,7 @@ const ChangePassword = () => {
           {loading?<span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>:"Submit"}
         </button>
       </form>
+    </div>
     </div>
   );
 };

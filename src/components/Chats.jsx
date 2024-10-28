@@ -934,7 +934,7 @@ const Chats = () => {
                       </li>
                       <li>
                         <button
-                          className="dropdown-item"
+                          className="dropdown-items"
                           type="button"
                           data-bs-toggle="offcanvas"
                           data-bs-target="#staticBackdrop56"

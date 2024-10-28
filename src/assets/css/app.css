@@ -1541,8 +1541,8 @@ a.fg-emoji-picker-close-button {
 }
 
 .side-menu-nav .nav-item .nav-link.active {
-  background-color: rgba(11, 20, 26, 0.1);
-  color: var(--bs-sidebar-menu-item-color);
+  background-color: #d9fdd3;
+  color:#008069;
 }
 
 .side-menu-nav .nav-item.show > .nav-link {
@@ -2503,11 +2503,14 @@ body[data-layout-mode="dark"] .dark-mode {
 
 .chat-input-section .chat-input-collapse {
   position: absolute;
-  bottom: 80px;
+  bottom: 93px;
   right: 0;
-  left: 0px;
+  left: 18px;
+  max-width: 200px;
   border-top: 1px solid var(--bs-border-color);
   overflow: hidden;
+  border-radius: 15px 15px;
+  box-shadow: 0 0px 1px 0 rgba(11, 20, 26, .1), 0 0px 1px 0 rgba(11, 20, 26, .1);
 }
 
 @media (max-width: 991.98px) {
@@ -3220,4 +3223,97 @@ body[data-layout-mode="dark"] .dark-mode {
 }
 .audioFrequency img{
   height: 30px;
+}
+.swiperhover:hover {
+  background: #f5f6f6;
+  border-radius: 5px 5px;
+  cursor: pointer;
+}
+.iconicTxt {
+  display:none;
+  font-size: 13px;
+  font-weight: 600;
+  color: #000;
+}
+.attachFiles {
+  display:flex;
+  width:100%;
+}
+.attachFiles:hover {
+  cursor: pointer;
+}
+.profile-user-dropdown {
+  margin-top: auto;
+}
+.doclists:hover, .iconshovers:hover {
+  background: rgba(226, 225, 225, 0.5);
+  cursor: pointer;
+}
+.marginAuto {
+  margin-top: auto !important;
+}
+.margnRight {
+  margin-right: 4.5rem;
+}
+.dropbox, .dropdown-menu{
+  padding: 0px 0px !important;
+}
+.dropbox li {
+  border-bottom: 0px #fff solid;
+  padding-left: 22px;
+  text-align:left;
+}
+.active-btn {
+  font-weight: 600;
+}
+@media (max-width: 991.98px) {
+  .side-menu {
+    position: fixed;
+    bottom: 0;
+    height: 65px;
+    min-width: 100%;
+    min-height: auto;
+    border-top: 1px solid var(--bs-sidebar-bg);
+  }
+  .iconicTxt {
+    display:block;
+  }
+  .side-menu-nav .nav-item .nav-link {
+    font-size: 20px;
+    width: 56px;
+    height: 30px;
+    line-height: 25px;
+    border-radius: 20px;
+  }
+  .side-menu-nav .nav-item .nav-link.active {
+    background-color: #d9fdd3;
+    color: #15603e;
+  }
+  .side-menu-nav .nav-item {
+    flex-basis: 0;
+    flex-grow: 1;
+    margin: 8px 0;
+  }
+  .side-menu-nav .nav-item .nav-link i {
+    color: #000;
+  }
+  .user-chat-topbar {
+    top: 60px;
+    position: fixed;
+  }
+  .assign-popup-content-agent{
+    width:98% !important;
+  }
+  .chat-input-section {
+    padding: 1rem .5rem !important;
+  }
+  .profile-user-dropdown {
+    margin-top: none;
+  }
+  .marginAuto {
+    margin-top: 8px !important;
+  }
+  .side-menu-nav {
+    width:100%;
+  }
 }

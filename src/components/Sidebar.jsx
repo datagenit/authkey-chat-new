@@ -358,6 +358,7 @@ const SideBar = () => {
                 role="tab"
               >
                 <i className="mdi mdi-message-text-outline" />
+                <span className="iconicTxt">Chats</span>
               </a>
             </li>
             {currentUser.user_type !== "agent" && (
@@ -371,6 +372,7 @@ const SideBar = () => {
               >
                 <Link to="/agent-management/report" className="nav-link">
                   <i className="mdi mdi-account-tie-outline"></i>
+                  <span className="iconicTxt">Agent</span>
                 </Link>
               </li>
             )}
@@ -418,7 +420,7 @@ const SideBar = () => {
               </a>
             </li> */}
 
-            <li className="nav-item mt-auto dropdown profile-user-dropdown">
+            <li className="nav-item marginAuto dropdown profile-user-dropdown">
               <div
                 className="nav-link dropdown-toggle"
                 role="button"
@@ -427,6 +429,7 @@ const SideBar = () => {
                 aria-expanded="false"
               >
                 <i className="mdi mdi-account-cog-outline" />
+                <span className="iconicTxt">Account</span>
               </div>
               <div className="dropdown-menu">
                 <a
