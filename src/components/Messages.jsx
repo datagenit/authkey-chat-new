@@ -86,7 +86,10 @@ const Messages = () => {
             name: selectedName,
           },
         });
+      }else{
+        setLoadingnewmsg(false);
       }
+      
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -102,7 +105,7 @@ const Messages = () => {
         onScroll={handleScroll}
       >
         <>
-          <Message chatData={messages} />
+          <Message chatData={messages} chatLoading={loadingnewmsg}/>
         </>
       </ul>
     </>

@@ -89,6 +89,9 @@ const Input = (props) => {
 
     if (file) {
       setButtonLoader(true);
+      try {
+        
+      
       let url = await uploadWhatsAppMedia();
 
       const msg = {};
@@ -130,12 +133,19 @@ const Input = (props) => {
         resetState();
       } else {
         resetState();
+        toast.error(data.message)
         setError({
           error: true,
           errorMessage: data.message,
           errorType: "alert-danger",
         });
+        setButtonLoader(false);
       }
+    } catch (error) {
+      toast.error(error.message)
+      setButtonLoader(false);
+      resetState();
+    }
     } else {
       const date = new Date();
       const msg = {
@@ -377,7 +387,11 @@ const Input = (props) => {
     if (currentUser.parent_id) {
       socket.emit("setup", currentUser);
     }
-
+    if(text.length>0){
+      setSendButton(true)
+    }else{
+      setSendButton(false)
+    }
     const timer1 = setTimeout(() => {
       if (text.trim()) {
         socket.emit("chat on", currentUser);

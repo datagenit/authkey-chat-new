@@ -1,8 +1,12 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { getCookie } from "../utils/Utils";
+import { io } from "socket.io-client";
+import { SOCKET_URL } from "../api/api";
 
 const AllContext = createContext();
 
 const AllProvider = ({ children }) => {
+  const [socket, setSocket]= useState(null);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [unReadChat, setUnReadChat] = useState([]);
@@ -20,6 +24,27 @@ const AllProvider = ({ children }) => {
   const[isOldMsg, setIsOldMsg] = useState(false);
   const [sendTemplatePopUp, setSendTemplatePopUp] = useState(false);
   const [wpProfile, setWpProfile] = useState([]);
+  const [callData, setCallData] = useState({
+    visible:false,
+    name:"",
+    mobile:null,
+    content:"",
+    message_type:""
+  })
+
+  useEffect(() => {
+    const userCookie = getCookie("user");
+    const userInfo = userCookie ? JSON.parse(userCookie) : null;
+    const currentuser=userInfo?.data;
+    const socketconn = io(SOCKET_URL);
+    if (currentuser.parent_id) {
+      socketconn.emit("setup", currentuser);
+    }
+    setSocket(socketconn);
+    return () => {
+      socketconn.disconnect();
+    };
+  }, []);
   return (
     <AllContext.Provider
       value={{
@@ -51,7 +76,9 @@ const AllProvider = ({ children }) => {
         selectedName, setSelectedName,
         isOldMsg, setIsOldMsg,
         sendTemplatePopUp, setSendTemplatePopUp,
-        wpProfile, setWpProfile
+        wpProfile, setWpProfile,
+        callData, setCallData,
+        socket
       }}
     >
       {children}

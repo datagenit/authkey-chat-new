@@ -20,6 +20,7 @@ const Chat = () => {
     const maskedNumber = lastFourDigits.padStart(num.length, "X");
     return maskedNumber;
   };
+  
   return (
     <>
       {data?.selectedMobile !== null ? (
@@ -109,7 +110,7 @@ const Chat = () => {
                     <div className="col-sm-2 col-2">
                       <ul className="list-inline user-chat-nav text-end mb-0">
                         <li className="list-inline-item">
-                          <div className="dropdown">
+                          {/* <div className="dropdown">
                             <button
                               className="btn nav-btn dropdown-toggle"
                               type="button"
@@ -129,7 +130,7 @@ const Chat = () => {
                                 />
                               </div>
                             </div>
-                          </div>
+                          </div> */}
                         </li>
                       </ul>
                     </div>

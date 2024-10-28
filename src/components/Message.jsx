@@ -2,9 +2,8 @@ import React, { useEffect, useRef } from "react";
 import "react-chat-elements/dist/main.css";
 import { MessageBox } from "react-chat-elements";
 import { ChatState } from "../context/AllProviders";
-import docpng from "../assets/doc.PNG"
 
-const Message = ({ chatData }) => {
+const Message = ({ chatData, chatLoading }) => {
   const messagesEndRef = useRef(null);
 
   const { setIsViewerOpen, setSelectedImage, scrolarinmiddle } = ChatState();
@@ -13,15 +12,12 @@ const Message = ({ chatData }) => {
     messagesEndRef.current?.scrollIntoView();
   };
 
-
   useEffect(() => {
     if (scrolarinmiddle === false) {
-      setTimeout(()=>{
+      setTimeout(() => {
         scrollToBottom();
-      },200)
-      
+      }, 200);
     }
-   
   }, [chatData, scrolarinmiddle]);
 
   const locationData = (inputString) => {
@@ -46,20 +42,26 @@ const Message = ({ chatData }) => {
 
   return (
     <>
-   
-     {scrolarinmiddle===true &&<button
-        className="btn btn-success"
-        style={{
-          zIndex: "10",
-          position: "fixed",
-          bottom: "100px",
-          right: "10px",
-          padding: "0",
-        }}
-        onClick={scrollToBottom}
-      >
-        <i className="bx bx-chevron-down" style={{ fontSize: "3em" }} />
-      </button>}
+      {scrolarinmiddle === true && (
+        <button
+          className="btn btn-success"
+          style={{
+            zIndex: "10",
+            position: "fixed",
+            bottom: "100px",
+            right: "10px",
+            padding: "0",
+          }}
+          onClick={scrollToBottom}
+        >
+          <i className="bx bx-chevron-down" style={{ fontSize: "3em" }} />
+        </button>
+      )}
+     {chatLoading&& <li className="d-flex justify-content-center">
+        <div className="spinner-border text-success" role="status">
+          <span className="sr-only"></span>
+        </div>
+      </li>}
       {chatData.map((message, index) => (
         <li key={index}>
           {message.req_from === "USER" ? (
@@ -70,7 +72,6 @@ const Message = ({ chatData }) => {
                   type={"text"}
                   text={message.message_content}
                   date={message.created}
-                  
                 />
               )}
               {message.message_type === "IMAGE" && (
@@ -150,7 +151,7 @@ const Message = ({ chatData }) => {
                   type={"text"}
                   text={message.message_content}
                   date={message.created}
-                  status={message.status==="pending"?"sent":"received"}
+                  status={message.status === "pending" ? "sent" : "received"}
                 />
               )}
               {message.message_type === "IMAGE" && (
@@ -213,7 +214,7 @@ const Message = ({ chatData }) => {
                   position={"right"}
                   type={"audio"}
                   text={message.image_caption}
-                  status={message.status==="pending"?"sent":"received"}
+                  status={message.status === "pending" ? "sent" : "received"}
                   data={{
                     audioURL: message.file_url,
                   }}

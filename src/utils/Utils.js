@@ -1,5 +1,4 @@
-import { auth } from "../firebase";
-import { signInWithCustomToken } from "firebase/auth";
+
 
 export const convertTimestamp = (timestamp) => {
   let date = timestamp.toDate();
@@ -40,15 +39,6 @@ export const deleteCookie = (name) => {
   window.location.href = "/";
 };
 
-// Function to login user using firebase token value
-export const authenticateWithFirebaseToken = async (firebaseToken) => {
-  try {
-    const userCredential = await signInWithCustomToken(auth, firebaseToken);
-    return userCredential.user;
-  } catch (error) {
-    throw error;
-  }
-};
 
 export const generateRandomColor = () => {
   const letters = "0123456789ABCDEF";

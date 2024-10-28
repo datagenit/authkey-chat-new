@@ -6,7 +6,7 @@ import auth_img from "../assets/whatsapp-brand.png"
 function TemplatePrev(props) {
   const {wpProfile} = ChatState();
   let previewData = props.previewData;
- console.log("prev",previewData);
+
  
   var truncatedcompanyname;
   if(wpProfile.comp_name){

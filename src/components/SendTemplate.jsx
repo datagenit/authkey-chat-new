@@ -151,6 +151,9 @@ const SendTemplate = (props) => {
     const numberString = props.mobile.toString();
     const countryCode = parseInt(numberString.slice(0, 2), 10);
     const num = parseInt(numberString.slice(2), 10);
+    try {
+      
+    
     const { data } = await axios.get(
       `${BASE_URL4}/request?authkey=${
         currentUser.authkey_parent
@@ -158,13 +161,17 @@ const SendTemplate = (props) => {
         bodyVar?.length > 0 ? queryString : ""
       }&${headVar?.length > 0 ? `headervalue=${headValue[0]}` : ""}`
     );
+    
     if (data.LogID === "") {
       toast.error(data.message);
     } else {
-      toast.error(data.message);
+      toast.success("Sent Successfully");
       setSendTemplatePopUp(false);
     }
     setLoadingBtn(false);
+  } catch (error) {
+    toast.error(error.message);
+  }
   };
 
   const replaceHeadVal = (index, value) => {
@@ -198,7 +205,7 @@ const SendTemplate = (props) => {
       return part;
     });
   };
-
+ 
   return (
     <div className="mt-4">
       <div className="container popupheight">

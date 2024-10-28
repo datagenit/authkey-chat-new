@@ -33,6 +33,7 @@ const Chats = () => {
     checkboxList,
     setCheckboxList,
     chatsLoading,
+    selectedName,
     setSelectedName,
     setIsOldMsg,
   } = ChatState();
@@ -51,7 +52,7 @@ const Chats = () => {
     if (currentUser.parent_id) {
       socket.emit("setup", currentUser);
     }
-    const handleNewConversation = (newmsg) => {
+    const handleNewConversation = async(newmsg) => {
       const playNotificationSound = () => {
         const sound = new Audio(notification);
         sound.play();
@@ -69,19 +70,21 @@ const Chats = () => {
             payload: {
               mobile: selectedMobileNumber,
               conversation: updatedChat,
+              name:selectedName
             },
           });
 
           playNotificationSound();
 
-          axios.post(`${BASE_URL}/netcore_conversation.php`, {
+          await axios.post(`${BASE_URL}/netcore_conversation.php`, {
+            user_id: currentUser.user_id,
             token: currentUser.token,
-            user_id: currentUser.userId,
             method: "add_unread",
             brand_number: currentUser.brand_number,
             from_mobile: newmsg.mobile,
             key_value: "1",
           });
+          return
         }
 
         if (newmsg.brand_number === currentUser.brand_number) {
@@ -150,6 +153,7 @@ const Chats = () => {
             payload: {
               mobile: selectedMobileNumber,
               conversation: updatedChat,
+              name:selectedName
             },
           });
 
@@ -231,6 +235,7 @@ const Chats = () => {
             payload: {
               mobile: selectedMobileNumber,
               conversation: updatedChat,
+              name:selectedName
             },
           });
 
@@ -312,6 +317,7 @@ const Chats = () => {
             payload: {
               mobile: selectedMobileNumber,
               conversation: updatedChat,
+              name:selectedName
             },
           });
 

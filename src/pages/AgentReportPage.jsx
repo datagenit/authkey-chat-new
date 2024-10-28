@@ -145,7 +145,7 @@ const AgentReportPage = () => {
         const { data } = await axios.post(`${BASE_URL2}/whatsapp_report`, {
           user_id: currentUser.parent_id,
           token: currentUser.parent_token,
-          method: "retrieve",
+          method: "today_report",
           brand_number: currentUser.brand_number,
           user_type: currentUser.user_type,
           agent_id: currentUser.user_id,

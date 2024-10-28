@@ -14,6 +14,8 @@ import Setting from "./pages/Setting";
 
 function App() {
   const { currentUser } = useContext(AuthContext);
+ 
+  
   const domainName = window.location.hostname;
   const ProtectedRoute = ({ children }) => {
     if (!currentUser) {
@@ -31,6 +33,7 @@ function App() {
   useEffect(()=>{
     document.title = domainName;
   },[domainName])
+ 
   return (
     <BrowserRouter>
       <Routes>
@@ -77,6 +80,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/verify-account" element={<VerifyAccount/>} />
       </Routes>
+      
       <ToastContainer
         position="top-right"
         autoClose={5000}
