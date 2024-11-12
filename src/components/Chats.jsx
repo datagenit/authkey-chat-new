@@ -52,7 +52,8 @@ const Chats = () => {
     if (currentUser.parent_id) {
       socket.emit("setup", currentUser);
     }
-    const handleNewConversation = async(newmsg) => {
+    const handleNewConversation = async (newmsg) => {
+      console.log("new chat",newmsg);
       const playNotificationSound = () => {
         const sound = new Audio(notification);
         sound.play();
@@ -64,18 +65,42 @@ const Chats = () => {
           newmsg.brand_number === currentUser.brand_number
         ) {
           const updatedChat = [...data.conversion, newmsg];
-
-          dispatch({
+          console.log("new chat",newmsg);
+          console.log("updated chat",updatedChat);
+          await dispatch({
             type: "CHANGE_USER",
             payload: {
               mobile: selectedMobileNumber,
               conversation: updatedChat,
-              name:selectedName
+              name: selectedName,
             },
           });
 
           playNotificationSound();
+          const filteredList = chats.filter(
+            (item) => item.mobile === newmsg.mobile
+          );
+          if (filteredList.length > 0) {
+            const index = chats.findIndex(
+              (item) => item.mobile === newmsg.mobile
+            );
 
+            if (index !== -1) {
+              const updatedItems = [...chats];
+              updatedItems[index] = {
+                ...updatedItems[index],
+                created: newmsg.created,
+                read_status: 1,
+                content: newmsg.message_content,
+              };
+
+              updatedItems.sort(
+                (a, b) => new Date(b.created) - new Date(a.created)
+              );
+
+              setChats(updatedItems);
+            }
+          }
           await axios.post(`${BASE_URL}/netcore_conversation.php`, {
             user_id: currentUser.user_id,
             token: currentUser.token,
@@ -84,7 +109,7 @@ const Chats = () => {
             from_mobile: newmsg.mobile,
             key_value: "1",
           });
-          return
+          return;
         }
 
         if (newmsg.brand_number === currentUser.brand_number) {
@@ -153,12 +178,35 @@ const Chats = () => {
             payload: {
               mobile: selectedMobileNumber,
               conversation: updatedChat,
-              name:selectedName
+              name: selectedName,
             },
           });
 
           playNotificationSound();
+          const filteredList = chats.filter(
+            (item) => item.mobile === newmsg.mobile
+          );
+          if (filteredList.length > 0) {
+            const index = chats.findIndex(
+              (item) => item.mobile === newmsg.mobile
+            );
 
+            if (index !== -1) {
+              const updatedItems = [...chats];
+              updatedItems[index] = {
+                ...updatedItems[index],
+                created: newmsg.created,
+                read_status: 1,
+                content: newmsg.message_content,
+              };
+
+              updatedItems.sort(
+                (a, b) => new Date(b.created) - new Date(a.created)
+              );
+
+              setChats(updatedItems);
+            }
+          }
           axios.post(`${BASE_URL}/netcore_conversation.php`, {
             token: currentUser.token,
             user_id: currentUser.userId,
@@ -235,12 +283,35 @@ const Chats = () => {
             payload: {
               mobile: selectedMobileNumber,
               conversation: updatedChat,
-              name:selectedName
+              name: selectedName,
             },
           });
 
           playNotificationSound();
+          const filteredList = chats.filter(
+            (item) => item.mobile === newmsg.mobile
+          );
+          if (filteredList.length > 0) {
+            const index = chats.findIndex(
+              (item) => item.mobile === newmsg.mobile
+            );
 
+            if (index !== -1) {
+              const updatedItems = [...chats];
+              updatedItems[index] = {
+                ...updatedItems[index],
+                created: newmsg.created,
+                read_status: 1,
+                content: newmsg.message_content,
+              };
+
+              updatedItems.sort(
+                (a, b) => new Date(b.created) - new Date(a.created)
+              );
+
+              setChats(updatedItems);
+            }
+          }
           axios.post(`${BASE_URL}/netcore_conversation.php`, {
             token: currentUser.token,
             user_id: currentUser.userId,
@@ -312,17 +383,40 @@ const Chats = () => {
         ) {
           const updatedChat = [...data.conversion, newmsg];
 
-          dispatch({
+          await dispatch({
             type: "CHANGE_USER",
             payload: {
               mobile: selectedMobileNumber,
               conversation: updatedChat,
-              name:selectedName
+              name: selectedName,
             },
           });
 
           playNotificationSound();
+          const filteredList = chats.filter(
+            (item) => item.mobile === newmsg.mobile
+          );
+          if (filteredList.length > 0) {
+            const index = chats.findIndex(
+              (item) => item.mobile === newmsg.mobile
+            );
 
+            if (index !== -1) {
+              const updatedItems = [...chats];
+              updatedItems[index] = {
+                ...updatedItems[index],
+                created: newmsg.created,
+                read_status: 1,
+                content: newmsg.message_content,
+              };
+
+              updatedItems.sort(
+                (a, b) => new Date(b.created) - new Date(a.created)
+              );
+
+              setChats(updatedItems);
+            }
+          }
           axios.post(`${BASE_URL}/netcore_conversation.php`, {
             token: currentUser.token,
             user_id: currentUser.userId,
@@ -392,7 +486,7 @@ const Chats = () => {
       socket.off("new conv", handleNewConversation);
       socket.disconnect();
     };
-  }, [currentUser, selectedMobileNumber, chats, dispatch, unReadChat]);
+  }, [currentUser, selectedMobileNumber, chats, dispatch, unReadChat, data]);
 
   useEffect(() => {
     const fetchUnreadMessages = async () => {
@@ -732,8 +826,8 @@ const Chats = () => {
     return matchFound.length > 0 ? true : false;
   };
   const maskNo = (num) => {
-    if(!num){
-      return
+    if (!num) {
+      return;
     }
     const lastFourDigits = num?.slice(-4);
     const maskedNumber = lastFourDigits.padStart(num?.length, "X");
@@ -812,7 +906,10 @@ const Chats = () => {
                   <i className="mdi mdi-cellphone align-middle text-muted" />
                 </div>
                 <div className="flex-grow-1">
-                  <b>Mobile:</b> {currentUser.user_type==="admin"?selectedChatDetails.mobile:maskNo(selectedChatDetails.mobile)}
+                  <b>Mobile:</b>{" "}
+                  {currentUser.user_type === "admin"
+                    ? selectedChatDetails.mobile
+                    : maskNo(selectedChatDetails.mobile)}
                 </div>
               </div>
               <div className="d-flex py-2 px-3">
